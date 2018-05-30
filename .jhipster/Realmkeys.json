@@ -1,0 +1,29 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "gateways",
+            "otherEntityName": "gateways",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "realmkey",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20180529223549",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "realmkeys",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}
