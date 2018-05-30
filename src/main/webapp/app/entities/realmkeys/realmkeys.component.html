@@ -1,0 +1,64 @@
+<div>
+    <h2>
+        <span>Realmkeys</span>
+        <button class="btn btn-primary float-right jh-create-entity create-realmkeys" [routerLink]="['/', { outlets: { popup: ['realmkeys-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Realmkeys
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="realmkeys">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Realmkey</span></th>
+            <th><span>Gateways</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let realmkeys of realmkeys ;trackBy: trackId">
+                <td><a [routerLink]="['../realmkeys', realmkeys.id ]">{{realmkeys.id}}</a></td>
+                <td>{{realmkeys.realmkey}}</td>
+                <td>
+                    <div *ngIf="realmkeys.gateways">
+                        <a [routerLink]="['../gateways', realmkeys.gateways?.id ]" >{{realmkeys.gateways?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../realmkeys', realmkeys.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'realmkeys/'+ realmkeys.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'realmkeys/'+ realmkeys.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

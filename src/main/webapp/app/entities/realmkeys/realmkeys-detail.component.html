@@ -1,0 +1,32 @@
+
+<div *ngIf="realmkeys">
+    <h2><span>Realmkeys</span> {{realmkeys.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>Realmkey</span></dt>
+        <dd>
+            <span>{{realmkeys.realmkey}}</span>
+        </dd>
+        <dt><span>Gateways</span></dt>
+        <dd>
+            <div *ngIf="realmkeys.gateways">
+                <a [routerLink]="['/gateways', realmkeys.gateways?.id]">{{realmkeys.gateways?.id}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'realmkeys/'+ realmkeys.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

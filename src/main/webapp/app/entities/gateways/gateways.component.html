@@ -1,0 +1,62 @@
+<div>
+    <h2>
+        <span>Gateways</span>
+        <button class="btn btn-primary float-right jh-create-entity create-gateways" [routerLink]="['/', { outlets: { popup: ['gateways-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span >
+            Create new Gateways
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="gateways">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>External Ip</span></th>
+            <th><span>Internal Ip</span></th>
+            <th><span>User Id</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let gateways of gateways ;trackBy: trackId">
+                <td><a [routerLink]="['../gateways', gateways.id ]">{{gateways.id}}</a></td>
+                <td>{{gateways.externalIp}}</td>
+                <td>{{gateways.internalIp}}</td>
+                <td>{{gateways.userId}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../gateways', gateways.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'gateways/'+ gateways.id + '/edit'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'gateways/'+ gateways.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

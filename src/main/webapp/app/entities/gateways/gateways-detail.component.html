@@ -1,0 +1,34 @@
+
+<div *ngIf="gateways">
+    <h2><span>Gateways</span> {{gateways.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>External Ip</span></dt>
+        <dd>
+            <span>{{gateways.externalIp}}</span>
+        </dd>
+        <dt><span>Internal Ip</span></dt>
+        <dd>
+            <span>{{gateways.internalIp}}</span>
+        </dd>
+        <dt><span>User Id</span></dt>
+        <dd>
+            <span>{{gateways.userId}}</span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'gateways/'+ gateways.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>
