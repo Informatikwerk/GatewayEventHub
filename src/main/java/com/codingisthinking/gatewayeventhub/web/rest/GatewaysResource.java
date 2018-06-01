@@ -1,6 +1,7 @@
 package com.codingisthinking.gatewayeventhub.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.codingisthinking.gatewayeventhub.domain.ConfigWrapper;
 import com.codingisthinking.gatewayeventhub.domain.Gateways;
 
 import com.codingisthinking.gatewayeventhub.repository.GatewaysRepository;
@@ -47,6 +48,7 @@ public class GatewaysResource {
     @Timed
     public ResponseEntity<Gateways> createGateways(@Valid @RequestBody Gateways gateways) throws URISyntaxException {
         log.debug("REST request to save Gateways : {}", gateways);
+        log.debug(" KEYS ", gateways.getRealmKeys());
         if (gateways.getId() != null) {
             throw new BadRequestAlertException("A new gateways cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -54,6 +56,22 @@ public class GatewaysResource {
         return ResponseEntity.created(new URI("/api/gateways/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * POST  /gateways : Create a new gateways.
+     *
+     * @param gateways the gateways to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new gateways, or with status 400 (Bad Request) if the gateways has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PostMapping("/gateways/test")
+    @Timed
+    public ResponseEntity<Gateways> createGatewaysAndKeys(@Valid @RequestBody ConfigWrapper gateways) throws URISyntaxException {
+        log.debug("REST request to save WrapperObject : {}", gateways.getGateways().toString());
+        log.debug("REST request to save WrapperObject keys : {}", gateways.getRealmkeys().toString());
+
+        return null;
     }
 
     /**

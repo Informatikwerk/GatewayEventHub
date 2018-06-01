@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,6 +32,9 @@ public class Gateways implements Serializable {
     @NotNull
     @Column(name = "user_id", nullable = false)
     private String userId;
+
+    @Transient
+    private List<String> realmKeys;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -74,6 +78,10 @@ public class Gateways implements Serializable {
     public Gateways userId(String userId) {
         this.userId = userId;
         return this;
+    }
+
+    public List<String> getRealmKeys(){
+        return this.realmKeys;
     }
 
     public void setUserId(String userId) {
