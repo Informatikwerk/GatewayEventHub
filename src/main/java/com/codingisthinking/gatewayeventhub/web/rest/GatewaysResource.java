@@ -4,7 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.codingisthinking.gatewayeventhub.domain.ConfigWrapper;
 import com.codingisthinking.gatewayeventhub.domain.Gateways;
 
+import com.codingisthinking.gatewayeventhub.domain.Realmkeys;
 import com.codingisthinking.gatewayeventhub.repository.GatewaysRepository;
+import com.codingisthinking.gatewayeventhub.repository.RealmkeysRepository;
 import com.codingisthinking.gatewayeventhub.web.rest.errors.BadRequestAlertException;
 import com.codingisthinking.gatewayeventhub.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +36,11 @@ public class GatewaysResource {
 
     private final GatewaysRepository gatewaysRepository;
 
-    public GatewaysResource(GatewaysRepository gatewaysRepository) {
+    private final RealmkeysRepository realmkeysRepository;
+
+    public GatewaysResource(GatewaysRepository gatewaysRepository, RealmkeysRepository realmkeysRepository) {
         this.gatewaysRepository = gatewaysRepository;
+        this.realmkeysRepository = realmkeysRepository;
     }
 
     /**
@@ -48,7 +54,6 @@ public class GatewaysResource {
     @Timed
     public ResponseEntity<Gateways> createGateways(@Valid @RequestBody Gateways gateways) throws URISyntaxException {
         log.debug("REST request to save Gateways : {}", gateways);
-        log.debug(" KEYS ", gateways.getRealmKeys());
         if (gateways.getId() != null) {
             throw new BadRequestAlertException("A new gateways cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -59,19 +64,29 @@ public class GatewaysResource {
     }
 
     /**
-     * POST  /gateways : Create a new gateways.
+     * POST  /gateways/config : Create a new config.
      *
-     * @param gateways the gateways to create
+     * @param configWrapper the config to create
      * @return the ResponseEntity with status 201 (Created) and with body the new gateways, or with status 400 (Bad Request) if the gateways has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/gateways/test")
+    @PostMapping("/gateways/config")
     @Timed
-    public ResponseEntity<Gateways> createGatewaysAndKeys(@Valid @RequestBody ConfigWrapper gateways) throws URISyntaxException {
-        log.debug("REST request to save WrapperObject : {}", gateways.getGateways().toString());
-        log.debug("REST request to save WrapperObject keys : {}", gateways.getRealmkeys().toString());
-
-        return null;
+    public ResponseEntity<Gateways> createGatewaysAndKeys(@Valid @RequestBody ConfigWrapper configWrapper) throws URISyntaxException {
+        log.debug("REST request to save WrapperObject : {}");
+        Gateways result = gatewaysRepository.save(configWrapper.getGateways());
+        List<String> keys = configWrapper.getRealmkeys();
+        List<Realmkeys> realmkeys = new ArrayList<>();
+        for(String key : keys){
+            Realmkeys rk = new Realmkeys();
+            rk.setGateways(result);
+            rk.setRealmkey(key);
+            realmkeys.add(rk);
+        }
+        realmkeysRepository.save(realmkeys);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**
