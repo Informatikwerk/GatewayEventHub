@@ -74,14 +74,16 @@ public class GatewaysResource {
     @Timed
     public ResponseEntity<Gateways> createGatewaysAndKeys(@Valid @RequestBody ConfigWrapper configWrapper) throws URISyntaxException {
         log.debug("REST request to save WrapperObject : {}");
-        Gateways result = gatewaysRepository.save(configWrapper.getGateways());
-        List<String> keys = configWrapper.getRealmkeys();
-        List<Realmkeys> realmkeys = new ArrayList<>();
-        for(String key : keys){
-            Realmkeys rk = new Realmkeys();
-            rk.setGateways(result);
-            rk.setRealmkey(key);
-            realmkeys.add(rk);
+        log.debug("REST request to save WrapperObject gates : {}", configWrapper.getGateways().toString());
+        log.debug("REST request to save WrapperObject keys : {}", configWrapper.getRealmkeys().toString());
+        Gateways gateways = configWrapper.getGateways();
+        if (gateways.getId() != null) {
+            throw new BadRequestAlertException("A new gateways cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Gateways result = gatewaysRepository.save(gateways);
+        List<Realmkeys> realmkeys = configWrapper.getRealmkeys();
+        for(Realmkeys key : realmkeys){
+            key.setGateways(result);
         }
         realmkeysRepository.save(realmkeys);
         return ResponseEntity.ok()
@@ -89,6 +91,30 @@ public class GatewaysResource {
             .body(result);
     }
 
+    /**
+     * PUT  /gateways/config : Updates an existing config.
+     *
+     * @param configWrapper the gateways to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated gateways,
+     * or with status 400 (Bad Request) if the gateways is not valid,
+     * or with status 500 (Internal Server Error) if the gateways couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/gateways/config")
+    @Timed
+    public ResponseEntity<Gateways> updateGatewaysAndKeys(@Valid @RequestBody ConfigWrapper configWrapper) throws URISyntaxException {
+        log.debug("REST request to update Gateways : {}", configWrapper);
+        Gateways gateways = configWrapper.getGateways();
+        if (gateways.getId() == null) {
+            return createGatewaysAndKeys(configWrapper);
+        }
+        Gateways result = gatewaysRepository.save(gateways);
+        List<Realmkeys> realmkeys = configWrapper.getRealmkeys();
+        realmkeysRepository.save(realmkeys);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, gateways.getId().toString()))
+            .body(result);
+    }
     /**
      * PUT  /gateways : Updates an existing gateways.
      *
