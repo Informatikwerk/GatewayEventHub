@@ -12,6 +12,8 @@ import com.codingisthinking.gatewayeventhub.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,6 +112,12 @@ public class GatewaysResource {
         }
         Gateways result = gatewaysRepository.save(gateways);
         List<Realmkeys> realmkeys = configWrapper.getRealmkeys();
+        Realmkeys example = new Realmkeys();
+        example.setGateways(result);
+        realmkeysRepository.delete(realmkeysRepository.findAll(Example.of(example)));
+        for(Realmkeys key : realmkeys){
+            key.setGateways(result);
+        }
         realmkeysRepository.save(realmkeys);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, gateways.getId().toString()))
