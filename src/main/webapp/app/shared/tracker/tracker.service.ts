@@ -43,8 +43,11 @@ export class JhiTrackerService {
         if (authToken) {
             url += '?access_token=' + authToken;
         }
+
+        console.log('url for websocket ', url);
         const socket = new SockJS(url);
         this.stompClient = Stomp.over(socket);
+        console.log(' socked data ', this.stompClient.get)
         const headers = {};
         this.stompClient.connect(headers, () => {
             this.connectedPromise('success');
