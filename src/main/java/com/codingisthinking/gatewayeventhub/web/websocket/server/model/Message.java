@@ -1,4 +1,4 @@
-package com.codingisthinking.gatewayeventhub.web.websocket.server;
+package com.codingisthinking.gatewayeventhub.web.websocket.server.model;
 
 import java.util.Date;
 

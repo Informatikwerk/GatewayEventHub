@@ -6,10 +6,13 @@ import com.codingisthinking.gatewayeventhub.domain.Realmkeys;
 import com.codingisthinking.gatewayeventhub.repository.RealmkeysRepository;
 import com.codingisthinking.gatewayeventhub.web.rest.errors.BadRequestAlertException;
 import com.codingisthinking.gatewayeventhub.web.rest.util.HeaderUtil;
+import com.codingisthinking.gatewayeventhub.web.websocket.server.model.ResponseMessage;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +32,9 @@ public class RealmkeysResource {
     private final Logger log = LoggerFactory.getLogger(RealmkeysResource.class);
 
     private static final String ENTITY_NAME = "realmkeys";
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     private final RealmkeysRepository realmkeysRepository;
 
@@ -87,6 +93,9 @@ public class RealmkeysResource {
     @Timed
     public List<Realmkeys> getAllRealmkeys() {
         log.debug("REST request to get all Realmkeys");
+        // TODO remove it, example passing event
+        this.template.convertAndSend("/topic/messages", new ResponseMessage("Get keys called"));
+
         return realmkeysRepository.findAll();
         }
 
