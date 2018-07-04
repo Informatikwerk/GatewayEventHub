@@ -6,7 +6,6 @@ import com.codingisthinking.gatewayeventhub.domain.Realmkeys;
 import com.codingisthinking.gatewayeventhub.repository.RealmkeysRepository;
 import com.codingisthinking.gatewayeventhub.web.rest.errors.BadRequestAlertException;
 import com.codingisthinking.gatewayeventhub.web.rest.util.HeaderUtil;
-import com.codingisthinking.gatewayeventhub.web.websocket.server.model.ResponseMessage;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +92,6 @@ public class RealmkeysResource {
     @Timed
     public List<Realmkeys> getAllRealmkeys() {
         log.debug("REST request to get all Realmkeys");
-        // TODO remove it, example passing event
-        this.template.convertAndSend("/topic/messages", new ResponseMessage("Get keys called"));
-
         return realmkeysRepository.findAll();
         }
 

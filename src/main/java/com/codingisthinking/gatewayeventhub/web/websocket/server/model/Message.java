@@ -1,33 +1,39 @@
 package com.codingisthinking.gatewayeventhub.web.websocket.server.model;
 
-import java.util.Date;
+import com.codingisthinking.gatewayeventhub.domain.Action;
 
 public class Message {
-    private String from;
-    private String text;
+    private String author;
+    private Action action;
 
     public Message() {
     }
 
-    public Message(final String from, final String text) {
-
-        this.from = from;
-        this.text = text;
+    public Message(final String from) {
+        this.author = from;
     }
 
-    public String getFrom() {
-        return from;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setAuthor(String from) {
+        this.author = from;
     }
 
-    public String getText() {
-        return text;
+    public Action getAction() {
+        return action;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+            "from='" + author + '\'' +
+            ", action=" + action +
+            '}';
     }
 }
