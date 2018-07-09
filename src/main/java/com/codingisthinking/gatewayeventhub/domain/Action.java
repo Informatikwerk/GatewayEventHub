@@ -14,6 +14,8 @@ public class Action {
 
     private String timeout;
 
+    private String realmKey;
+
     private String contentType;
 
     public String getUrl() {
@@ -56,6 +58,14 @@ public class Action {
         this.data = data;
     }
 
+    public String getRealmKey() {
+        return realmKey;
+    }
+
+    public void setRealmKey(String realmKey) {
+        this.realmKey = realmKey;
+    }
+
     @Override
     public String toString() {
         return "Action{" +
@@ -63,6 +73,7 @@ public class Action {
             ", method='" + method + '\'' +
             ", data='" + data + '\'' +
             ", timeout='" + timeout + '\'' +
+            ", realmKey='" + realmKey + '\'' +
             ", contentType='" + contentType + '\'' +
             '}';
     }

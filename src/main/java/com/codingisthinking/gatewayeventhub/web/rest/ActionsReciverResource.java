@@ -45,7 +45,7 @@ public class ActionsReciverResource {
         this.template.convertAndSend("/topic/messages", msg);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert(ENTITY_NAME, "Header"))
-            .body("TODO response msg");
+            .body("Message recived and passed to LanGateway.");
     }
 
 
