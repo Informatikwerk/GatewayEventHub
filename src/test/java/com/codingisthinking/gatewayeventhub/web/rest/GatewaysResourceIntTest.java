@@ -47,6 +47,9 @@ public class GatewaysResourceIntTest {
     private static final String DEFAULT_USER_ID = "AAAAAAAAAA";
     private static final String UPDATED_USER_ID = "BBBBBBBBBB";
 
+    private static final String DEFAULT_WEBSOCKET_ID = "AAAAAAAAAA";
+    private static final String UPDATED_WEBSOCKET_ID = "BBBBBBBBBB";
+
     @Autowired
     private GatewaysRepository gatewaysRepository;
 
@@ -87,7 +90,8 @@ public class GatewaysResourceIntTest {
         Gateways gateways = new Gateways()
             .externalIp(DEFAULT_EXTERNAL_IP)
             .internalIp(DEFAULT_INTERNAL_IP)
-            .userId(DEFAULT_USER_ID);
+            .userId(DEFAULT_USER_ID)
+            .websocketId(DEFAULT_WEBSOCKET_ID);
         return gateways;
     }
 
@@ -114,6 +118,7 @@ public class GatewaysResourceIntTest {
         assertThat(testGateways.getExternalIp()).isEqualTo(DEFAULT_EXTERNAL_IP);
         assertThat(testGateways.getInternalIp()).isEqualTo(DEFAULT_INTERNAL_IP);
         assertThat(testGateways.getUserId()).isEqualTo(DEFAULT_USER_ID);
+        assertThat(testGateways.getWebsocketId()).isEqualTo(DEFAULT_WEBSOCKET_ID);
     }
 
     @Test
@@ -191,6 +196,24 @@ public class GatewaysResourceIntTest {
 
     @Test
     @Transactional
+    public void checkWebsocketIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = gatewaysRepository.findAll().size();
+        // set the field null
+        gateways.setWebsocketId(null);
+
+        // Create the Gateways, which fails.
+
+        restGatewaysMockMvc.perform(post("/api/gateways")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(gateways)))
+            .andExpect(status().isBadRequest());
+
+        List<Gateways> gatewaysList = gatewaysRepository.findAll();
+        assertThat(gatewaysList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllGateways() throws Exception {
         // Initialize the database
         gatewaysRepository.saveAndFlush(gateways);
@@ -202,7 +225,8 @@ public class GatewaysResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(gateways.getId().intValue())))
             .andExpect(jsonPath("$.[*].externalIp").value(hasItem(DEFAULT_EXTERNAL_IP.toString())))
             .andExpect(jsonPath("$.[*].internalIp").value(hasItem(DEFAULT_INTERNAL_IP.toString())))
-            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.toString())));
+            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.toString())))
+            .andExpect(jsonPath("$.[*].websocketId").value(hasItem(DEFAULT_WEBSOCKET_ID.toString())));
     }
 
     @Test
@@ -218,7 +242,8 @@ public class GatewaysResourceIntTest {
             .andExpect(jsonPath("$.id").value(gateways.getId().intValue()))
             .andExpect(jsonPath("$.externalIp").value(DEFAULT_EXTERNAL_IP.toString()))
             .andExpect(jsonPath("$.internalIp").value(DEFAULT_INTERNAL_IP.toString()))
-            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.toString()));
+            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.toString()))
+            .andExpect(jsonPath("$.websocketId").value(DEFAULT_WEBSOCKET_ID.toString()));
     }
 
     @Test
@@ -243,7 +268,8 @@ public class GatewaysResourceIntTest {
         updatedGateways
             .externalIp(UPDATED_EXTERNAL_IP)
             .internalIp(UPDATED_INTERNAL_IP)
-            .userId(UPDATED_USER_ID);
+            .userId(UPDATED_USER_ID)
+            .websocketId(UPDATED_WEBSOCKET_ID);
 
         restGatewaysMockMvc.perform(put("/api/gateways")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -257,6 +283,7 @@ public class GatewaysResourceIntTest {
         assertThat(testGateways.getExternalIp()).isEqualTo(UPDATED_EXTERNAL_IP);
         assertThat(testGateways.getInternalIp()).isEqualTo(UPDATED_INTERNAL_IP);
         assertThat(testGateways.getUserId()).isEqualTo(UPDATED_USER_ID);
+        assertThat(testGateways.getWebsocketId()).isEqualTo(UPDATED_WEBSOCKET_ID);
     }
 
     @Test

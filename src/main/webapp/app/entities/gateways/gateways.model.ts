@@ -6,6 +6,7 @@ export class Gateways implements BaseEntity {
         public externalIp?: string,
         public internalIp?: string,
         public userId?: string,
+        public websocketId?: string,
     ) {
     }
 }

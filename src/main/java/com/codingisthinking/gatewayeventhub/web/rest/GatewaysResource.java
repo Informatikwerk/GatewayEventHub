@@ -78,7 +78,6 @@ public class GatewaysResource {
         log.debug("REST request to save WrapperObject : {}");
         log.debug("REST request to save WrapperObject gates : {}", configWrapper.getGateways().toString());
         log.debug("REST request to save WrapperObject keys : {}", configWrapper.getRealmkeys().toString());
-        log.debug("REST request to save WrapperObject websocketId : {}", configWrapper.getWebsocketid());
         Gateways gateways = configWrapper.getGateways();
         if (gateways.getId() != null) {
             throw new BadRequestAlertException("A new gateways cannot already have an ID", ENTITY_NAME, "idexists");

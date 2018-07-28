@@ -33,8 +33,9 @@ public class Gateways implements Serializable {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Transient
-    private List<String> realmKeys;
+    @NotNull
+    @Column(name = "websocket_id", nullable = false)
+    private String websocketId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -80,12 +81,21 @@ public class Gateways implements Serializable {
         return this;
     }
 
-    public List<String> getRealmKeys(){
-        return this.realmKeys;
-    }
-
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getWebsocketId() {
+        return websocketId;
+    }
+
+    public Gateways websocketId(String websocketId) {
+        this.websocketId = websocketId;
+        return this;
+    }
+
+    public void setWebsocketId(String websocketId) {
+        this.websocketId = websocketId;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -116,6 +126,7 @@ public class Gateways implements Serializable {
             ", externalIp='" + getExternalIp() + "'" +
             ", internalIp='" + getInternalIp() + "'" +
             ", userId='" + getUserId() + "'" +
+            ", websocketId='" + getWebsocketId() + "'" +
             "}";
     }
 }
