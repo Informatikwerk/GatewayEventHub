@@ -2,6 +2,7 @@ package com.codingisthinking.gatewayeventhub.web.websocket.server;
 
 import com.codingisthinking.gatewayeventhub.web.websocket.server.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,10 +15,12 @@ public class ChatController {
     private SimpMessagingTemplate template;
 
 
-    @MessageMapping("/chat")
-    @SendTo("/topic/messages")
+    @MessageMapping("/actions/register")
+    @SendTo("/doors/messages")
     public Message send(final Message message) throws Exception {
-        System.out.println(message.getAuthor() + ": "+message.getAction());
-        return new Message(message.getAction().toString());
+        System.out.println(" ======= ***************** This langateway want to register **************** ========");
+        System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
+
+        return new Message("GatewayEventHub");
     }
 }

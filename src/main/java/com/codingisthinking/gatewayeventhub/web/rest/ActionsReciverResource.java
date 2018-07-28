@@ -58,19 +58,23 @@ public class ActionsReciverResource {
         Message msg = new Message();
         msg.setAuthor("GatewayEventHub");
         Realmkeys realmkeys = new Realmkeys();
+        Gateways gateways = null;
+        String uniqId = "unique";
         realmkeys.setRealmkey(action.getRealmKey());
         Realmkeys matchingRealmkey = realmkeysRepository.findOne(Example.of(realmkeys));
         if(matchingRealmkey != null){
-            Gateways gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
+//            uniqId = matchingRealmkey.getRealmkey();
+            gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
             System.out.println(gateways.getExternalIp());
             System.out.println(gateways.getInternalIp());
         }
         msg.setAction(action);
-        this.template.convertAndSend("/topic/messages", msg);
+        this.template.convertAndSend("/doors/actions/" + uniqId, msg);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert(ENTITY_NAME, "Header"))
             .body("Message recived and passed to LanGateway.");
     }
+
 
 
 }
