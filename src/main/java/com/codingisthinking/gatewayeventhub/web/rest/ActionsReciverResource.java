@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -63,10 +64,14 @@ public class ActionsReciverResource {
         realmkeys.setRealmkey(action.getRealmKey());
         Realmkeys matchingRealmkey = realmkeysRepository.findOne(Example.of(realmkeys));
         if(matchingRealmkey != null){
-//            uniqId = matchingRealmkey.getRealmkey();
             gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
-            System.out.println(gateways.getExternalIp());
-            System.out.println(gateways.getInternalIp());
+            if(gateways != null){
+                uniqId = gateways.getWebsocketId();
+            } else {
+                log.error("No matching gateway for Realmkey =[ " + action.getRealmKey() + " ] in our database.");
+            }
+        } else {
+            log.error("No matching realmkeys for Realmkey =[ " + action.getRealmKey() + " ] in our database.");
         }
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
