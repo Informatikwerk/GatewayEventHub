@@ -16,7 +16,7 @@
 logging:
     level:
         ROOT: INFO
-        com.codingisthinking.gatewayeventhub: INFO
+        de.informatikwerk.gatewayeventhub: INFO
         io.github.jhipster: INFO
 
 spring:

@@ -16,7 +16,7 @@
 logging:
     level:
         ROOT: DEBUG
-        com.codingisthinking.gatewayeventhub: DEBUG
+        de.informatikwerk.gatewayeventhub: DEBUG
         io.github.jhipster: DEBUG
 
 spring:

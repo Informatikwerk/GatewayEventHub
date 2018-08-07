@@ -49,13 +49,13 @@ dependencyManagement {
 
 defaultTasks 'bootRun'
 
-group = 'com.codingisthinking.gatewayeventhub'
+group = 'de.informatikwerk.gatewayeventhub'
 version = '0.0.1-SNAPSHOT'
 
 description = ''
 
 bootRepackage {
-   mainClass = 'com.codingisthinking.gatewayeventhub.GatewayeventhubApp'
+   mainClass = 'de.informatikwerk.gatewayeventhub.GatewayeventhubApp'
 }
 
 war {
@@ -63,7 +63,7 @@ war {
 }
 
 springBoot {
-    mainClass = 'com.codingisthinking.gatewayeventhub.GatewayeventhubApp'
+    mainClass = 'de.informatikwerk.gatewayeventhub.GatewayeventhubApp'
     executable = true
     buildInfo()
 }

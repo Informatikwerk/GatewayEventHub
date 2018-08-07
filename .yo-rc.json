@@ -1,12 +1,12 @@
 {
   "generator-jhipster": {
     "promptValues": {
-      "packageName": "com.codingisthinking.gatewayeventhub"
+      "packageName": "de.informatikwerk.gatewayeventhub"
     },
     "jhipsterVersion": "4.14.1",
     "baseName": "gatewayeventhub",
-    "packageName": "com.codingisthinking.gatewayeventhub",
-    "packageFolder": "com/codingisthinking/gatewayeventhub",
+    "packageName": "de.informatikwerk.gatewayeventhub",
+    "packageFolder": "de/informatikwerk/gatewayeventhub",
     "serverPort": "8087",
     "authenticationType": "jwt",
     "cacheProvider": "ehcache",
