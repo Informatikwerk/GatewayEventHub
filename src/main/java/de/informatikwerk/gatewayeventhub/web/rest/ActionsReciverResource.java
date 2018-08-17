@@ -74,11 +74,24 @@ public class ActionsReciverResource {
         }
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
+        ResponseEntity<String> response = getResponse();
+        synchronized (response) {
+            try{
+                response.wait();
+                response.getBody();
+            }
+            catch ( InterruptedException e){
+
+            }
+        }
+        return response;
+    }
+
+    private ResponseEntity<String> getResponse() {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert(ENTITY_NAME, "Header"))
             .body("Message recived and passed to LanGateway.");
     }
-
 
 
 }

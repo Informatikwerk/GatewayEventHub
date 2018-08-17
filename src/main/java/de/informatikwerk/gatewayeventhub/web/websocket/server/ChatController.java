@@ -11,9 +11,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 
-    @Autowired
-    private SimpMessagingTemplate template;
-
 
     @MessageMapping("/actions/register")
     @SendTo("/doors/messages")
@@ -23,4 +20,16 @@ public class ChatController {
 
         return new Message("GatewayEventHub");
     }
+
+    @MessageMapping("/actions/responses")
+    public Message responses(final Message message) throws Exception {
+        System.out.println(" ======= ***************** This langateway want to response **************** ========");
+        System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
+        System.out.println(" ======= *****************" + message.getAction().getData() + "**************** ========");
+
+        return new Message("GatewayEventHub");
+    }
+
+
+
 }
