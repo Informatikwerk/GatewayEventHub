@@ -7,6 +7,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ChatController {
@@ -26,6 +30,11 @@ public class ChatController {
         System.out.println(" ======= ***************** This langateway want to response **************** ========");
         System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
         System.out.println(" ======= *****************" + message.getAction().getData() + "**************** ========");
+        JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
+        Jedis jedis = jedisPool.getResource();
+        jedis.set(message.getMessageId(), message.getAction().getData());
+        jedis.expire(message.getMessageId(), 30);
+
 
         return new Message("GatewayEventHub");
     }

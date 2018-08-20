@@ -2,11 +2,15 @@ package de.informatikwerk.gatewayeventhub.web.websocket.server.model;
 
 import de.informatikwerk.gatewayeventhub.domain.Action;
 
+import java.util.UUID;
+
 public class Message {
     private String author;
     private Action action;
+    private String messageId;
 
     public Message() {
+        this.messageId = UUID.randomUUID().toString();
     }
 
     public Message(final String from) {
@@ -27,6 +31,10 @@ public class Message {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public String getMessageId() {
+        return messageId;
     }
 
     @Override

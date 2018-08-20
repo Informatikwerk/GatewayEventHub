@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
@@ -54,7 +56,7 @@ public class ActionsReciverResource {
      */
     @PostMapping("/action")
     @Timed
-    public ResponseEntity<String> passActionToLanGateway(@Valid @RequestBody Action action) throws URISyntaxException {
+    public ResponseEntity<Action> passActionToLanGateway(@Valid @RequestBody Action action) throws URISyntaxException {
         log.debug("REST request to save Realmkeys : {}", action);
         Message msg = new Message();
         msg.setAuthor("GatewayEventHub");
@@ -74,24 +76,26 @@ public class ActionsReciverResource {
         }
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
-        ResponseEntity<String> response = getResponse();
-        synchronized (response) {
-            try{
-                response.wait();
-                response.getBody();
-            }
-            catch ( InterruptedException e){
-
+        JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
+        Jedis jedis = jedisPool.getResource();
+        String uniqueTestValue = null;
+        //TODO replace with more elegant solution
+        while(uniqueTestValue == null){
+            try {
+                uniqueTestValue = jedis.get(msg.getMessageId());
+                System.out.println("Checked value and it's " + uniqueTestValue);
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        return response;
-    }
 
-    private ResponseEntity<String> getResponse() {
+        Action responseAction = action;
+        responseAction.setData(uniqueTestValue);
+
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createAlert(ENTITY_NAME, "Header"))
-            .body("Message recived and passed to LanGateway.");
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, action.getRealmKey()))
+            .body(responseAction);
     }
-
 
 }
