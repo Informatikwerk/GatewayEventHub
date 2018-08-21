@@ -79,19 +79,28 @@ public class ActionsReciverResource {
         JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
         Jedis jedis = jedisPool.getResource();
         String uniqueTestValue = null;
+        boolean timeout = false;
+        int timeoutTime = 0;
         //TODO replace with more elegant solution
-        while(uniqueTestValue == null){
+        while(uniqueTestValue == null && timeout == false){
             try {
                 uniqueTestValue = jedis.get(msg.getMessageId());
-                System.out.println("Checked value and it's " + uniqueTestValue);
-                Thread.sleep(10000);
+                Thread.sleep(1000);
+                timeoutTime++;
+                timeout = timeoutTime == 10;
+                System.out.println("Timeout status " + timeout + " for " + msg.getMessageId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         Action responseAction = action;
-        responseAction.setData(uniqueTestValue);
+        if(timeout){
+            System.out.println("TIMEOUT!!!");
+            responseAction.setData("Timeout");
+        } else {
+            responseAction.setData(uniqueTestValue);
+        }
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, action.getRealmKey()))

@@ -1,5 +1,6 @@
 package de.informatikwerk.gatewayeventhub.web.websocket.server;
 
+import de.informatikwerk.gatewayeventhub.config.ApplicationProperties;
 import de.informatikwerk.gatewayeventhub.web.websocket.server.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -16,6 +17,12 @@ import java.util.concurrent.TimeUnit;
 public class ChatController {
 
 
+    private final ApplicationProperties applicationProperties;
+
+    public ChatController(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
+
     @MessageMapping("/actions/register")
     @SendTo("/doors/messages")
     public Message send(final Message message) throws Exception {
@@ -30,10 +37,10 @@ public class ChatController {
         System.out.println(" ======= ***************** This langateway want to response **************** ========");
         System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
         System.out.println(" ======= *****************" + message.getAction().getData() + "**************** ========");
-        JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
+        JedisPool jedisPool = new JedisPool(applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
         Jedis jedis = jedisPool.getResource();
         jedis.set(message.getMessageId(), message.getAction().getData());
-        jedis.expire(message.getMessageId(), 30);
+        jedis.expire(message.getMessageId(), applicationProperties.getJedisMsgExpire());
 
 
         return new Message("GatewayEventHub");
