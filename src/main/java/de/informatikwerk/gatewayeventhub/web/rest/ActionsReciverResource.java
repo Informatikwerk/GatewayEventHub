@@ -1,6 +1,7 @@
 package de.informatikwerk.gatewayeventhub.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import de.informatikwerk.gatewayeventhub.config.ApplicationProperties;
 import de.informatikwerk.gatewayeventhub.domain.Action;
 import de.informatikwerk.gatewayeventhub.domain.Gateways;
 import de.informatikwerk.gatewayeventhub.domain.Realmkeys;
@@ -14,14 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * REST controller for managing Recived messages.
@@ -41,10 +40,16 @@ public class ActionsReciverResource {
 
     private final RealmkeysRepository realmkeysRepository;
 
+    private  final ApplicationProperties applicationProperties;
 
-    public ActionsReciverResource(GatewaysRepository gatewaysRepository, RealmkeysRepository realmkeysRepository) {
+    private JedisPool jedisPool;
+
+
+    public ActionsReciverResource(GatewaysRepository gatewaysRepository, RealmkeysRepository realmkeysRepository, ApplicationProperties applicationProperties) {
         this.gatewaysRepository = gatewaysRepository;
         this.realmkeysRepository = realmkeysRepository;
+        this.applicationProperties = applicationProperties;
+        this.jedisPool = new JedisPool(applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
     }
 
     /**
@@ -76,7 +81,6 @@ public class ActionsReciverResource {
         }
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
-        JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
         Jedis jedis = jedisPool.getResource();
         String uniqueTestValue = null;
         boolean timeout = false;
@@ -88,7 +92,6 @@ public class ActionsReciverResource {
                 Thread.sleep(1000);
                 timeoutTime++;
                 timeout = timeoutTime == 10;
-                System.out.println("Timeout status " + timeout + " for " + msg.getMessageId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -96,7 +99,7 @@ public class ActionsReciverResource {
 
         Action responseAction = action;
         if(timeout){
-            System.out.println("TIMEOUT!!!");
+            System.out.println("Timeout for " + msg.getMessageId());
             responseAction.setData("Timeout");
         } else {
             responseAction.setData(uniqueTestValue);

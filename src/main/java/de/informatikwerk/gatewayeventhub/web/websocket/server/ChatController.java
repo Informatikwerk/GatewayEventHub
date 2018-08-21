@@ -2,16 +2,11 @@ package de.informatikwerk.gatewayeventhub.web.websocket.server;
 
 import de.informatikwerk.gatewayeventhub.config.ApplicationProperties;
 import de.informatikwerk.gatewayeventhub.web.websocket.server.model.Message;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ChatController {
@@ -34,9 +29,6 @@ public class ChatController {
 
     @MessageMapping("/actions/responses")
     public Message responses(final Message message) throws Exception {
-        System.out.println(" ======= ***************** This langateway want to response **************** ========");
-        System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
-        System.out.println(" ======= *****************" + message.getAction().getData() + "**************** ========");
         JedisPool jedisPool = new JedisPool(applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
         Jedis jedis = jedisPool.getResource();
         jedis.set(message.getMessageId(), message.getAction().getData());
