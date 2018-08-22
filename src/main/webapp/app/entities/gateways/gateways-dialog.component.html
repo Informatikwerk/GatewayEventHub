@@ -45,6 +45,17 @@
                 </small>
             </div>
         </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_websocketId">Websocket Id</label>
+            <input type="text" class="form-control" name="websocketId" id="field_websocketId"
+                [(ngModel)]="gateways.websocketId" required/>
+            <div [hidden]="!(editForm.controls.websocketId?.dirty && editForm.controls.websocketId?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.websocketId?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
 
     </div>
     <div class="modal-footer">
