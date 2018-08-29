@@ -15,12 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.time.Duration;
 
 /**
  * REST controller for managing Recived messages.
@@ -49,7 +52,9 @@ public class ActionsReciverResource {
         this.gatewaysRepository = gatewaysRepository;
         this.realmkeysRepository = realmkeysRepository;
         this.applicationProperties = applicationProperties;
-        this.jedisPool = new JedisPool(applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
+        if(this.jedisPool == null){
+            this.jedisPool = new JedisPool(applicationProperties.buildPoolConfig(), applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
+        }
     }
 
     /**
@@ -62,7 +67,7 @@ public class ActionsReciverResource {
     @PostMapping("/action")
     @Timed
     public ResponseEntity<Action> passActionToLanGateway(@Valid @RequestBody Action action) throws URISyntaxException {
-        log.debug("REST request to save Realmkeys : {}", action);
+        log.debug("REST pass action to correct LanGateway : {}", action);
         Message msg = new Message();
         msg.setAuthor("GatewayEventHub");
         Realmkeys realmkeys = new Realmkeys();
@@ -81,25 +86,23 @@ public class ActionsReciverResource {
         }
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
-        Jedis jedis = jedisPool.getResource();
         String uniqueTestValue = null;
-        boolean timeout = false;
-        int timeoutTime = 0;
-        //TODO replace with more elegant solution
-        while(uniqueTestValue == null && timeout == false){
-            try {
-                uniqueTestValue = jedis.get(msg.getMessageId());
-                Thread.sleep(1000);
-                timeoutTime++;
-                timeout = timeoutTime == 10;
+        Jedis jedis = null;
+        if(jedis == null){
+            jedis = jedisPool.getResource();
+        }
+        try {
+            Thread.sleep(8000);
+            uniqueTestValue = jedis.get(msg.getMessageId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        if(jedis != null){
+            jedis.close();
         }
 
         Action responseAction = action;
-        if(timeout){
-            System.out.println("Timeout for " + msg.getMessageId());
+        if(uniqueTestValue == null){
             responseAction.setData("Timeout");
         } else {
             responseAction.setData(uniqueTestValue);
@@ -109,5 +112,6 @@ public class ActionsReciverResource {
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, action.getRealmKey()))
             .body(responseAction);
     }
+
 
 }

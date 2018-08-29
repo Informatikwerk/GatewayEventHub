@@ -14,8 +14,13 @@ public class ChatController {
 
     private final ApplicationProperties applicationProperties;
 
+    private JedisPool jedisPool;
+
     public ChatController(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
+        if(this.jedisPool == null){
+            this.jedisPool = new JedisPool(applicationProperties.buildPoolConfig(), applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
+        }
     }
 
     @MessageMapping("/actions/register")
@@ -29,10 +34,10 @@ public class ChatController {
 
     @MessageMapping("/actions/responses")
     public Message responses(final Message message) throws Exception {
-        JedisPool jedisPool = new JedisPool(applicationProperties.getJedisIp(), applicationProperties.getJedisPort());
         Jedis jedis = jedisPool.getResource();
         jedis.set(message.getMessageId(), message.getAction().getData());
         jedis.expire(message.getMessageId(), applicationProperties.getJedisMsgExpire());
+        jedis.close();
 
 
         return new Message("GatewayEventHub");
