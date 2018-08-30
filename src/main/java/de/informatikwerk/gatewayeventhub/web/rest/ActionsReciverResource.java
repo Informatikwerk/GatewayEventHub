@@ -87,20 +87,15 @@ public class ActionsReciverResource {
         msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
         String uniqueTestValue = null;
-        Jedis jedis = null;
-        if(jedis == null){
-            jedis = jedisPool.getResource();
-        }
+        Jedis jedis = jedisPool.getResource();
         try {
             Thread.sleep(8000);
             uniqueTestValue = jedis.get(msg.getMessageId());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        if(jedis != null){
-            jedis.close();
+            catch (InterruptedException e) {
+                e.printStackTrace();
         }
-
+        jedis.close();
         Action responseAction = action;
         if(uniqueTestValue == null){
             responseAction.setData("Timeout");

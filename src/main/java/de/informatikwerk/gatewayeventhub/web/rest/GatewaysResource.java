@@ -152,8 +152,13 @@ public class GatewaysResource {
      */
     @GetMapping("/gateways")
     @Timed
-    public List<Gateways> getAllGateways() {
+    public List<Gateways> getAllGateways(@RequestParam(required = false) String websocketId) {
         log.debug("REST request to get all Gateways");
+        if(websocketId != null){
+            Gateways exampleGateway = new Gateways();
+            exampleGateway.setWebsocketId(websocketId);
+            return gatewaysRepository.findAll(Example.of(exampleGateway));
+        }
         return gatewaysRepository.findAll();
         }
 
