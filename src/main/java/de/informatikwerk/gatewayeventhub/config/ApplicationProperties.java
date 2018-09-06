@@ -1,7 +1,6 @@
 package de.informatikwerk.gatewayeventhub.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
 
@@ -42,19 +41,4 @@ public class ApplicationProperties {
         this.jedisMsgExpire = jedisMsgExpire;
     }
 
-
-    public JedisPoolConfig buildPoolConfig() {
-        final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(128);
-        poolConfig.setMaxIdle(16);
-        poolConfig.setMinIdle(8);
-        poolConfig.setTestOnBorrow(true);
-        poolConfig.setTestOnReturn(true);
-        poolConfig.setTestWhileIdle(true);
-        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(30).toMillis());
-        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(15).toMillis());
-        poolConfig.setNumTestsPerEvictionRun(3);
-        poolConfig.setBlockWhenExhausted(true);
-        return poolConfig;
-    }
 }
