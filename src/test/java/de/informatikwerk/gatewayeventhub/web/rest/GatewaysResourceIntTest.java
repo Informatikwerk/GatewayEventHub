@@ -4,6 +4,7 @@ import de.informatikwerk.gatewayeventhub.GatewayeventhubApp;
 
 import de.informatikwerk.gatewayeventhub.domain.Gateways;
 import de.informatikwerk.gatewayeventhub.repository.GatewaysRepository;
+import de.informatikwerk.gatewayeventhub.repository.RealmkeysRepository;
 import de.informatikwerk.gatewayeventhub.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -54,6 +55,9 @@ public class GatewaysResourceIntTest {
     private GatewaysRepository gatewaysRepository;
 
     @Autowired
+    private RealmkeysRepository realmkeysRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +76,7 @@ public class GatewaysResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final GatewaysResource gatewaysResource = new GatewaysResource(gatewaysRepository);
+        final GatewaysResource gatewaysResource = new GatewaysResource(gatewaysRepository,realmkeysRepository);
         this.restGatewaysMockMvc = MockMvcBuilders.standaloneSetup(gatewaysResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
