@@ -1,13 +1,18 @@
 pipeline {
-    agent any
-
+    agent {
+        dockerfile {
+			args '-v /opt/tomcat/.jenkins/workspace/geh:/opt -w /opt'	
+		}			
+    }
+	environment {
+        HOME = '.'
+    }
     stages {
-        stage('Build') {
+        stage('Test') {
             steps {
-               dir ('D:/projekte/AutomationFarm/gatewayeventhub') { 
-               bat 'gradlew clean build war'
-           }
+                sh 'pwd'
+		sh './gradlew clean build -x test war'		
+            }
         }
     }
-}
-}
+}}
