@@ -1,7 +1,7 @@
 pipeline {
     agent {
         dockerfile {
-			args '-v /opt/tomcat/.jenkins/workspace/geh:/opt -w /opt'	
+			args '-v /opt/tomcat/.jenkins/workspace/gatewayeventhub:/opt -w /opt'	
 		}			
     }
 	environment {
