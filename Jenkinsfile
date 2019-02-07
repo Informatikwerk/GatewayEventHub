@@ -29,6 +29,7 @@ pipeline {
 			agent { label 'master' }
 			steps {
 				sshagent (['b857f680-137f-4664-8478-c76098a49af7']) {
+					sh 'docker image tag gatewayeventhub localhost:5000/gatewayeventhub'
 					sh 'docker push localhost:5000/gatewayeventhub'
 					sh 'scp -r -P 22 /opt/tomcat/automation/gatewayeventhub/src/main/docker/app.yml eugen@192.168.175.49:/home/eugen/automation/gatewayeventhub/app.yml'
 					sh 'scp -r -P 22 /opt/tomcat/automation/gatewayeventhub/src/main/docker/mysql.yml eugen@192.168.175.49:/home/eugen/automation/gatewayeventhub/mysql.yml'
