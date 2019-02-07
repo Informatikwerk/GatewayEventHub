@@ -1,7 +1,7 @@
 version: '2'
 services:
     gatewayeventhub-app:
-        image: gatewayeventhub
+        image: localhost:5000/gatewayeventhub
         environment:
             - SPRING_PROFILES_ACTIVE=dev,swagger
             - SPRING_DATASOURCE_URL=jdbc:mysql://gatewayeventhub-mysql:3306/gatewayeventhub?useUnicode=true&characterEncoding=utf8&useSSL=false
