@@ -22,7 +22,7 @@ pipeline {
                 sh 'echo Calling ------------- $GEH_HOME/gradlew bootRepackage -Pprod buildDocker'
                 sh './gradlew bootRepackage -Pprod buildDocker --stacktrace'
                 sh 'echo Calling ------------- $GEH_HOME/docker-compose -f src/main/docker/app.yml up -d'
-                sh 'docker-compose -f src/main/docker/app.yml up -d'
+                sh 'docker-compose -f src/main/docker/app.yml up -d --remove-orphans'
             }
         }
 		stage('Remote Build') {
