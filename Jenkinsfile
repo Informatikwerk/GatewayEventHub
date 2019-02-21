@@ -36,10 +36,10 @@ pipeline {
 				sshagent (['b857f680-137f-4664-8478-c76098a49af7']) {
 					sh 'docker image tag gatewayeventhub ${REGISTRY}/gatewayeventhub'
 					sh 'docker push ${REGISTRY}/gatewayeventhub'
-					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/app.yml ${SSH_IP}:/home/jenkins/automation/gatewayeventhub/app.yml'
-					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/mysql.yml ${SSH_IP}:/home/jenkins/automation/gatewayeventhub/mysql.yml'
+					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/app.yml ${SSH_IP}:/media/app/automation/gatewayeventhub/app.yml'
+					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/mysql.yml ${SSH_IP}:/media/app/automation/gatewayeventhub/mysql.yml'
 					sh 'ssh -p ${SSH_PORT} -T -R 5000:${REGISTRY} ${SSH_IP} docker pull ${REGISTRY}/gatewayeventhub'
-					sh 'ssh -p ${SSH_PORT} -T -R 5000:${REGISTRY} ${SSH_IP} docker-compose -f /home/jenkins/automation/gatewayeventhub/app.yml up -d'
+					sh 'ssh -p ${SSH_PORT} -T -R 5000:${REGISTRY} ${SSH_IP} docker-compose -f /media/app/automation/gatewayeventhub/app.yml up -d'
 				}
 			}
 		}
