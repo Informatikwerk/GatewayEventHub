@@ -1,5 +1,10 @@
 pipeline {
     agent none
+	environment {
+        SSH_IP = 'jenkins@157.97.108.196'
+        SSH_PORT = '2807'
+		REGISTRY = 'localhost:5000'
+    }
     stages {
         stage('Build') {
             agent {
@@ -29,12 +34,12 @@ pipeline {
 			agent { label 'master' }
 			steps {
 				sshagent (['b857f680-137f-4664-8478-c76098a49af7']) {
-					sh 'docker image tag gatewayeventhub localhost:5000/gatewayeventhub'
-					sh 'docker push localhost:5000/gatewayeventhub'
-					sh 'scp -r -P 22 /opt/tomcat/automation/gatewayeventhub/src/main/docker/app.yml eugen@192.168.175.49:/home/eugen/automation/gatewayeventhub/app.yml'
-					sh 'scp -r -P 22 /opt/tomcat/automation/gatewayeventhub/src/main/docker/mysql.yml eugen@192.168.175.49:/home/eugen/automation/gatewayeventhub/mysql.yml'
-					sh 'ssh -T -R 5000:localhost:5000 eugen@192.168.175.49 docker pull localhost:5000/gatewayeventhub'
-					sh 'ssh -T -R 5000:localhost:5000 eugen@192.168.175.49 docker-compose -f /home/eugen/automation/gatewayeventhub/app.yml up -d'
+					sh 'docker image tag gatewayeventhub ${REGISTRY}/gatewayeventhub'
+					sh 'docker push ${REGISTRY}/gatewayeventhub'
+					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/app.yml ${SSH_IP}:/media/app/automation/gatewayeventhub/app.yml'
+					sh 'scp -r -P ${SSH_PORT} /opt/tomcat/automation/gatewayeventhub/src/main/docker/mysql.yml ${SSH_IP}:/media/app/automation/gatewayeventhub/mysql.yml'
+					sh 'ssh -p ${SSH_PORT} -T -R 5000:${REGISTRY} ${SSH_IP} docker pull ${REGISTRY}/gatewayeventhub'
+					sh 'ssh -p ${SSH_PORT} -T -R 5000:${REGISTRY} ${SSH_IP} docker-compose -f /media/app/automation/gatewayeventhub/app.yml up -d'
 				}
 			}
 		}
