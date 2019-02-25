@@ -2,8 +2,8 @@ version: '2'
 services:
     gatewayeventhub-mysql:
         image: mysql:5.7.20
-        # volumes:
-        #     - ~/volumes/jhipster/gatewayeventhub/mysql/:/var/lib/mysql/
+        volumes:
+            - /media/app/automation/gatewayeventhub/geh-mysql-data:/var/lib/mysql/
         environment:
             - MYSQL_USER=root
             - MYSQL_ALLOW_EMPTY_PASSWORD=yes
