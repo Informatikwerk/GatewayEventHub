@@ -22,7 +22,7 @@ public class ChatController {
     @MessageMapping("/actions/register")
     @SendTo("/doors/messages")
     public Message send(final Message message) throws Exception {
-        System.out.println(" ======= ***************** This langateway want to register **************** ========");
+        System.out.println(" ======= ***************** This langateway wants to register **************** ========");
         System.out.println(" ======= *****************" + message.getAuthor() + "**************** ========");
 
         return new Message("GatewayEventHub");
