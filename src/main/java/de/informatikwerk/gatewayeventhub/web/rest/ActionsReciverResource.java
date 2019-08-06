@@ -62,9 +62,29 @@ public class ActionsReciverResource {
     public ResponseEntity<Action> passActionToLanGateway(@Valid @RequestBody Action action) throws URISyntaxException {
         log.debug("REST pass action to correct LanGateway : {}", action);
         SyncResponseObserver syncResponseObserver = new SyncResponseObserver(3000);
+        
+        Message msg = getMessageTemplateForAction(action);
+        String uniqId = getWebsocketUniqIdForAction(action);
+        if(uniqId == null){
+            return ResponseEntity.notFound().build();
+        }
+        this.template.convertAndSend("/doors/actions/" + uniqId, msg);
+        SyncHttpsRequestThreadRegistry syncHttpsRequestThreadRegistry = SyncHttpsRequestThreadRegistry.instance();
+        syncHttpsRequestThreadRegistry.put(msg.getMessageId(), syncResponseObserver);
+        syncResponseObserver.waitForResponse();
+        Message message = syncResponseObserver.getMessage();
+        if(message == null){
+            return ResponseEntity.ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, msg.getMessageId()))
+                .body(null);
+        }
 
-        Message msg = new Message();
-        msg.setAuthor("GatewayEventHub");
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, message.getAction().getRealmKey()))
+            .body(message.getAction());
+    }
+
+    public String getWebsocketUniqIdForAction(Action action){
         Realmkeys realmkeys = new Realmkeys();
         String uniqId = null;
         realmkeys.setRealmkey(action.getRealmKey());
@@ -73,15 +93,38 @@ public class ActionsReciverResource {
             Gateways gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
             if(gateways != null){
                 uniqId = gateways.getWebsocketId();
-            } else {
-                log.error("No matching gateway for Realmkey =[ " + action.getRealmKey() + " ] in our database.");
-                return ResponseEntity.notFound().build();
+                return uniqId;
             }
-        } else {
-            log.error("No matching realmkeys for Realmkey =[ " + action.getRealmKey() + " ] in our database.");
+        }
+        log.error("No matching realmkeys for Realmkey =[ " + action.getRealmKey() + " ] in our database.");
+        return null;
+    }
+
+    public Message getMessageTemplateForAction(Action action){
+        Message msg = new Message();
+        msg.setAuthor("GatewayEventHub");
+        msg.setAction(action);
+        return msg;
+    }
+
+    /**
+     * Get  /value : Passing value request to langateway.
+     *
+     * @param action the action to pass.
+     * @return the ResponseEntity TODO description
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @GetMapping("/value")
+    @Timed
+    public ResponseEntity<Action> passValueRequestToLanGateway(@Valid @RequestBody Action action) throws URISyntaxException {
+        log.debug("REST pass value request to correct LanGateway : {}", action);
+        SyncResponseObserver syncResponseObserver = new SyncResponseObserver(3000);
+
+        Message msg = getMessageTemplateForAction(action);
+        String uniqId = getWebsocketUniqIdForAction(action);
+        if(uniqId == null){
             return ResponseEntity.notFound().build();
         }
-        msg.setAction(action);
         this.template.convertAndSend("/doors/actions/" + uniqId, msg);
         SyncHttpsRequestThreadRegistry syncHttpsRequestThreadRegistry = SyncHttpsRequestThreadRegistry.instance();
         syncHttpsRequestThreadRegistry.put(msg.getMessageId(), syncResponseObserver);
