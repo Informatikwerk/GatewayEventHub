@@ -2,9 +2,9 @@ package de.informatikwerk.gatewayeventhub.domain;
 
 
 /**
- * A Action.
+ * A DelegateCommand.
  */
-public class Action {
+public class DelegateCommand {
 
     private String url;
 
@@ -68,7 +68,7 @@ public class Action {
 
     @Override
     public String toString() {
-        return "Action{" +
+        return "DelegateCommand{" +
             "url='" + url + '\'' +
             ", method='" + method + '\'' +
             ", data='" + data + '\'' +

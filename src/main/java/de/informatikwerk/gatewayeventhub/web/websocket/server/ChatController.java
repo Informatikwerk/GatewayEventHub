@@ -19,7 +19,7 @@ public class ChatController {
         this.applicationProperties = applicationProperties;
     }
 
-    @MessageMapping("/actions/register")
+    @MessageMapping("/delegateCommands/register")
     @SendTo("/doors/messages")
     public Message send(final Message message) throws Exception {
         System.out.println(" ======= ***************** This langateway wants to register **************** ========");
@@ -28,7 +28,7 @@ public class ChatController {
         return new Message("GatewayEventHub");
     }
 
-    @MessageMapping("/actions/responses")
+    @MessageMapping("/delegateCommands/responses")
     public Message responses(final Message message) throws Exception {
         SyncResponseObserver syncResponseObserver = SyncHttpsRequestThreadRegistry.instance().remove(message.getMessageId());
         syncResponseObserver.setMessage(message);

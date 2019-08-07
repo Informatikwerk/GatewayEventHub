@@ -1,12 +1,12 @@
 package de.informatikwerk.gatewayeventhub.web.websocket.server.model;
 
-import de.informatikwerk.gatewayeventhub.domain.Action;
+import de.informatikwerk.gatewayeventhub.domain.DelegateCommand;
 
 import java.util.UUID;
 
 public class Message {
     private String author;
-    private Action action;
+    private DelegateCommand delegateCommand;
     private String messageId;
 
     public Message() {
@@ -25,12 +25,12 @@ public class Message {
         this.author = from;
     }
 
-    public Action getAction() {
-        return action;
+    public DelegateCommand getDelegateCommand() {
+        return delegateCommand;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setDelegateCommand(DelegateCommand delegateCommand) {
+        this.delegateCommand = delegateCommand;
     }
 
     public String getMessageId() {
@@ -41,7 +41,7 @@ public class Message {
     public String toString() {
         return "Message{" +
             "from='" + author + '\'' +
-            ", action=" + action +
+            ", delegateCommand=" + delegateCommand +
             '}';
     }
 }
