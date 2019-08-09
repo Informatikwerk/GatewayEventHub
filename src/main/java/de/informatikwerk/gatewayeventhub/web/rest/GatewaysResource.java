@@ -7,11 +7,13 @@ import de.informatikwerk.gatewayeventhub.domain.Gateways;
 import de.informatikwerk.gatewayeventhub.domain.Realmkeys;
 import de.informatikwerk.gatewayeventhub.repository.GatewaysRepository;
 import de.informatikwerk.gatewayeventhub.repository.RealmkeysRepository;
+import de.informatikwerk.gatewayeventhub.service.GatewaysService;
 import de.informatikwerk.gatewayeventhub.web.rest.errors.BadRequestAlertException;
 import de.informatikwerk.gatewayeventhub.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,9 @@ public class GatewaysResource {
     private final GatewaysRepository gatewaysRepository;
 
     private final RealmkeysRepository realmkeysRepository;
+
+    @Autowired
+    private GatewaysService gatewaysService;
 
     public GatewaysResource(GatewaysRepository gatewaysRepository, RealmkeysRepository realmkeysRepository) {
         this.gatewaysRepository = gatewaysRepository;
@@ -175,7 +180,21 @@ public class GatewaysResource {
         Gateways gateways = gatewaysRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(gateways));
     }
-
+    
+    /**
+     * GET  /gateways/:id : get a gateways for websocketid.
+     *
+     * @param websocketId the websocketId of the gateways to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the gateways, or with status 404 (Not Found)
+     */
+    @GetMapping("/gateways/{websocketId}")
+    @Timed
+    public ResponseEntity<Gateways> getGateways(@PathVariable String websocketId) {
+        log.debug("REST request to get Gateways with websocketId : {}", websocketId);
+        Gateways gateways = gatewaysService.findByWebsocketId(websocketId);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(gateways));
+    }
+    
     /**
      * DELETE  /gateways/:id : delete the "id" gateways.
      *

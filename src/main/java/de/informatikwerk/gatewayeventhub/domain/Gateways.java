@@ -8,6 +8,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+
+@NamedQueries({
+    @NamedQuery(name = Gateways.QUERY_FIND_BY_WEBSOCKETID, query = "select gateways from Gateways gateways where websocket_id=:" + Gateways.PARAM_WEBSOCKET_ID),
+})
+
 /**
  * A Gateways.
  */
@@ -16,6 +21,12 @@ import java.util.Objects;
 public class Gateways implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static final String QUERY_FIND_BY_WEBSOCKETID = "findGatewaysByWebsocketId";
+
+    public static final String PARAM_WEBSOCKET_ID = "websocket_id";
+
+    public static final String[] FIELDS = { PARAM_WEBSOCKET_ID };
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
