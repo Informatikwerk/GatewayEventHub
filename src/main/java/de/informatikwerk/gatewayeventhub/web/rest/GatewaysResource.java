@@ -182,14 +182,14 @@ public class GatewaysResource {
     }
     
     /**
-     * GET  /gateways/:id : get a gateways for websocketid.
+     * GET  /gatewaysForWebsocketId/:websocketId : get a gateways for websocketid.
      *
      * @param websocketId the websocketId of the gateways to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the gateways, or with status 404 (Not Found)
      */
-    @GetMapping("/gateways/{websocketId}")
+    @GetMapping("/gatewaysForWebsocketId/{websocketId}")
     @Timed
-    public ResponseEntity<Gateways> getGateways(@PathVariable String websocketId) {
+    public ResponseEntity<Gateways> getGatewaysForWebsocketId(@PathVariable String websocketId) {
         log.debug("REST request to get Gateways with websocketId : {}", websocketId);
         Gateways gateways = gatewaysService.findByWebsocketId(websocketId);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(gateways));
