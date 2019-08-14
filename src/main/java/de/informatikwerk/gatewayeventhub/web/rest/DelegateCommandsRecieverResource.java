@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * REST controller for managing Recived messages.
@@ -40,18 +41,17 @@ public class DelegateCommandsRecieverResource {
 
     private final RealmkeysRepository realmkeysRepository;
 
-    private  final ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
-
-
-    public DelegateCommandsRecieverResource(GatewaysRepository gatewaysRepository, RealmkeysRepository realmkeysRepository, ApplicationProperties applicationProperties) {
+    public DelegateCommandsRecieverResource(GatewaysRepository gatewaysRepository,
+            RealmkeysRepository realmkeysRepository, ApplicationProperties applicationProperties) {
         this.gatewaysRepository = gatewaysRepository;
         this.realmkeysRepository = realmkeysRepository;
         this.applicationProperties = applicationProperties;
     }
 
     /**
-     * POST  /delegateCommand : Passing command to langateway.
+     * POST /delegateCommand : Passing command to langateway.
      *
      * @param delegateCommand the delegateCommand to pass.
      * @return the ResponseEntity TODO description
@@ -59,13 +59,14 @@ public class DelegateCommandsRecieverResource {
      */
     @PostMapping("/delegateCommand")
     @Timed
-    public ResponseEntity<DelegateCommand> passDelegateCommandToLanGateway(@Valid @RequestBody DelegateCommand delegateCommand) throws URISyntaxException {
+    public ResponseEntity<DelegateCommand> passDelegateCommandToLanGateway(
+            @Valid @RequestBody DelegateCommand delegateCommand) throws URISyntaxException {
         log.debug("REST pass delegateCommand to correct LanGateway : {}", delegateCommand);
         SyncResponseObserver syncResponseObserver = new SyncResponseObserver(3000);
-        
+
         Message msg = getMessageTemplateForDelegateCommand(delegateCommand);
         String uniqId = getWebsocketUniqIdForDelegateCommand(delegateCommand);
-        if(uniqId == null){
+        if (uniqId == null) {
             return ResponseEntity.notFound().build();
         }
         this.template.convertAndSend("/doors/delegateCommands/" + uniqId, msg);
@@ -73,41 +74,38 @@ public class DelegateCommandsRecieverResource {
         syncHttpsRequestThreadRegistry.put(msg.getMessageId(), syncResponseObserver);
         syncResponseObserver.waitForResponse();
         Message message = syncResponseObserver.getMessage();
-        if(message == null){
-            return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, msg.getMessageId()))
-                .body(null);
+        if (message == null) {
+            return ResponseEntity.ok().body(null);
         }
 
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, message.getDelegateCommand().getRealmKey()))
-            .body(message.getDelegateCommand());
+        return ResponseEntity.ok().body(message.getDelegateCommand());
     }
 
-    public String getWebsocketUniqIdForDelegateCommand(DelegateCommand delegateCommand){
+    public String getWebsocketUniqIdForDelegateCommand(DelegateCommand delegateCommand) {
         Realmkeys realmkeys = new Realmkeys();
         String uniqId = null;
         realmkeys.setRealmkey(delegateCommand.getRealmKey());
-        Realmkeys matchingRealmkey = realmkeysRepository.findOne(Example.of(realmkeys));
-        if(matchingRealmkey != null){
-            Gateways gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
-            if(gateways != null){
-                uniqId = gateways.getWebsocketId();
-                return uniqId;
+        List<Realmkeys> matchingRealmkeys = realmkeysRepository.findAll(Example.of(realmkeys));
+        if(matchingRealmkeys != null && matchingRealmkeys.size() > 0){
+            if(matchingRealmkeys.size() > 1) log.warn("Found multiple realmkeys [" + delegateCommand.getRealmKey() + "] !");
+            Realmkeys matchingRealmkey = matchingRealmkeys.get(0);
+            if (matchingRealmkey != null) {
+                Gateways gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
+                if (gateways != null) {
+                    uniqId = gateways.getWebsocketId();
+                    return uniqId;
+                }
             }
         }
         log.error("No matching realmkeys for Realmkey =[ " + delegateCommand.getRealmKey() + " ] in our database.");
         return null;
     }
 
-    public Message getMessageTemplateForDelegateCommand(DelegateCommand delegateCommand){
+    public Message getMessageTemplateForDelegateCommand(DelegateCommand delegateCommand) {
         Message msg = new Message();
         msg.setAuthor("GatewayEventHub");
         msg.setDelegateCommand(delegateCommand);
         return msg;
     }
-
-    
-
 
 }
