@@ -7,6 +7,10 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+@NamedQueries({
+    @NamedQuery(name = Realmkeys.QUERY_FIND_BY_GATEWAYID, query = "select realmkeys from Realmkeys realmkeys where gateways_id=:" + Realmkeys.PARAM_GATEWAY_ID),
+})
+
 /**
  * A Realmkeys.
  */
@@ -15,6 +19,12 @@ import java.util.Objects;
 public class Realmkeys implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static final String QUERY_FIND_BY_GATEWAYID = "findGatewaysByGatewayId";
+
+    public static final String PARAM_GATEWAY_ID = "gateways_id";
+
+    public static final String[] FIELDS = { PARAM_GATEWAY_ID };
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

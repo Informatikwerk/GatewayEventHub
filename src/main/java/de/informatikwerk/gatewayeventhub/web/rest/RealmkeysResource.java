@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import de.informatikwerk.gatewayeventhub.domain.Realmkeys;
 
 import de.informatikwerk.gatewayeventhub.repository.RealmkeysRepository;
+import de.informatikwerk.gatewayeventhub.service.RealmkeysService;
 import de.informatikwerk.gatewayeventhub.web.rest.errors.BadRequestAlertException;
 import de.informatikwerk.gatewayeventhub.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -33,7 +34,7 @@ public class RealmkeysResource {
     private static final String ENTITY_NAME = "realmkeys";
 
     @Autowired
-    private SimpMessagingTemplate template;
+    private RealmkeysService realmkeysService;
 
     private final RealmkeysRepository realmkeysRepository;
 
@@ -107,6 +108,20 @@ public class RealmkeysResource {
         log.debug("REST request to get Realmkeys : {}", id);
         Realmkeys realmkeys = realmkeysRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(realmkeys));
+    }
+
+    /**
+     * GET  /realmkeysForGatewayId/:gatewayId : get the realmkeys which fit to the gateways with gatewayId.
+     *
+     * @param gatewayId the gatewayId of the gateways
+     * @return the ResponseEntity with status 200 (OK) and the list of realmkeys in body
+     */
+    @GetMapping("/realmkeysForGatewayId/{gatewayId}")
+    @Timed
+    public List<Realmkeys> getRealmkeysForGatewayId(@PathVariable String gatewayId) {
+        log.debug("REST request to get Realmkeys with gatewayId : {}", gatewayId);
+        List<Realmkeys> realmkeys = realmkeysService.findByGatewayId(gatewayId);
+        return realmkeys;
     }
 
     /**
