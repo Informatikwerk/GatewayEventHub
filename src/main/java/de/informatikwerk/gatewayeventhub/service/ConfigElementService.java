@@ -155,6 +155,9 @@ public class ConfigElementService {
      */
     public ConfigElement save(ConfigElement configElement) {
         log.debug("Request to save ConfigElement : {}", configElement);
+        if (configElement.getId() != null) {
+            setApplicationPropertyForConfigElement(configElement);
+        }
         return configElementRepository.save(configElement);
     }
 
