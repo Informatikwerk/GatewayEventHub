@@ -7,6 +7,7 @@
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180529223310_added_entity_Gateways.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20180529223549_added_entity_Realmkeys.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190814081515_added_entity_ConfigElement.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20180529223549_added_entity_constraints_Realmkeys.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->

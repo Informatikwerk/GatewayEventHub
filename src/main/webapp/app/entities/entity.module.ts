@@ -2,12 +2,14 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { GatewayeventhubGatewaysModule } from './gateways/gateways.module';
 import { GatewayeventhubRealmkeysModule } from './realmkeys/realmkeys.module';
+import { GatewayeventhubConfigElementModule } from './config-element/config-element.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
     imports: [
         GatewayeventhubGatewaysModule,
         GatewayeventhubRealmkeysModule,
+        GatewayeventhubConfigElementModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],
