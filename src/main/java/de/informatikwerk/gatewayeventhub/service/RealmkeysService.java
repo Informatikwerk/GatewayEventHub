@@ -41,13 +41,20 @@ public class RealmkeysService {
     public Realmkeys save(Realmkeys realmkey) {
         log.debug("Request to save Realmkey : {}", realmkey);
 
+        log.debug("Checking if a realmkey with realmkey [" + realmkey.getRealmkey() + "] already exists...");
         List<Realmkeys> realmkeysWithRealmkey = findByRealmkey(realmkey.getRealmkey());
-        if(realmkey.getId() != null && realmkeysWithRealmkey.size() > 1 || realmkey.getId() == null && realmkeysWithRealmkey.size() > 0){
+        if(realmkeysWithRealmkey.size() > 0){
+            log.debug("...found this Realmkey with realmkey [" + realmkey.getRealmkey() + "]:");
+            log.debug(realmkeysWithRealmkey.get(0).toString());
             Realmkeys realmkeyToDelete = realmkeysWithRealmkey.get(0);
-            if(realmkeyToDelete.getId() == realmkey.getId()){
-                realmkeyToDelete = realmkeysWithRealmkey.get(1);
+            if(realmkeyToDelete != null &&  realmkeyToDelete.getId() != realmkey.getId()){
+                log.debug("Deleting realmkey: " + realmkeyToDelete.toString());
+                realmkeysRepository.delete(realmkeyToDelete.getId());
+            } else {
+                log.debug("Existing realmkey gets updated");
             }
-            if(realmkeyToDelete != null) realmkeysRepository.delete(realmkeyToDelete.getId());
+        } else {
+            log.debug("...no realmkey with realmkey [" + realmkey.getRealmkey() + "] found");
         }
 
         return realmkeysRepository.save(realmkey);

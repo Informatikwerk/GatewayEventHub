@@ -87,7 +87,7 @@ public class DelegateCommandsRecieverResource {
         realmkeys.setRealmkey(delegateCommand.getRealmKey());
         List<Realmkeys> matchingRealmkeys = realmkeysRepository.findAll(Example.of(realmkeys));
         if(matchingRealmkeys != null && matchingRealmkeys.size() > 0){
-            if(matchingRealmkeys.size() > 1) log.warn("Found multiple realmkeys [" + delegateCommand.getRealmKey() + "] !");
+            if(matchingRealmkeys.size() > 1) log.warn("Found multiple realmkeys [" + delegateCommand.getRealmKey() + "]!");
             Realmkeys matchingRealmkey = matchingRealmkeys.get(0);
             if (matchingRealmkey != null) {
                 Gateways gateways = gatewaysRepository.findOne(matchingRealmkey.getGateways().getId());
