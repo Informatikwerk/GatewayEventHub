@@ -56,7 +56,7 @@ public class RealmkeysResource {
         if (realmkeys.getId() != null) {
             throw new BadRequestAlertException("A new realmkeys cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Realmkeys result = realmkeysRepository.save(realmkeys);
+        Realmkeys result = realmkeysService.save(realmkeys);
         return ResponseEntity.created(new URI("/api/realmkeys/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -78,7 +78,7 @@ public class RealmkeysResource {
         if (realmkeys.getId() == null) {
             return createRealmkeys(realmkeys);
         }
-        Realmkeys result = realmkeysRepository.save(realmkeys);
+        Realmkeys result = realmkeysService.save(realmkeys);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, realmkeys.getId().toString()))
             .body(result);

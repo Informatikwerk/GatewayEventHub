@@ -9,6 +9,7 @@ import java.util.Objects;
 
 @NamedQueries({
     @NamedQuery(name = Realmkeys.QUERY_FIND_BY_GATEWAYID, query = "select realmkeys from Realmkeys realmkeys where gateways_id=:" + Realmkeys.PARAM_GATEWAY_ID),
+    @NamedQuery(name = Realmkeys.QUERY_FIND_BY_REALMKEY, query = "select realmkeys from Realmkeys realmkeys where realmkey=:" + Realmkeys.PARAM_REALMKEY),
 })
 
 /**
@@ -20,11 +21,13 @@ public class Realmkeys implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String QUERY_FIND_BY_GATEWAYID = "findGatewaysByGatewayId";
-
+    public static final String QUERY_FIND_BY_GATEWAYID = "findRealmkeysByGatewayId";
+    public static final String QUERY_FIND_BY_REALMKEY = "findRealmkeysByRealmkey";
+    
+    public static final String PARAM_REALMKEY = "realmkey";
     public static final String PARAM_GATEWAY_ID = "gateways_id";
 
-    public static final String[] FIELDS = { PARAM_GATEWAY_ID };
+    public static final String[] FIELDS = { PARAM_GATEWAY_ID, PARAM_REALMKEY };
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
